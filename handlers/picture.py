@@ -6,8 +6,8 @@ picture_router = Router()
 
 @picture_router.message(Command("picture"))
 async def picture_handler(message: types.Message):
-    photo = types.FSInputFile("images/recipe1.jpg")
+    photo = types.FSInputFile("images/recipe3.jpg")
     await message.answer_photo(
         photo=photo,
-        caption="пицца"
+        caption="фото"
     )
