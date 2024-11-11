@@ -7,7 +7,7 @@ from handlers.picture import picture_router
 from handlers.other_messages import echo_router
 from handlers.random_recipe import random_recipe_router
 from handlers.minfo import minfo_router
-from handlers.review_dialog import review_router
+from handlers.review_dialog import opros_router
 
 
 async def main():
@@ -15,7 +15,7 @@ async def main():
     dp.include_router(picture_router)
     dp.include_router(minfo_router)
     dp.include_router(random_recipe_router)
-    dp.include_router(review_router)
+    dp.include_router(opros_router)
     dp.include_router(echo_router)
 
     # запуск бота:
