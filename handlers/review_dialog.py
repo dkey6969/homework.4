@@ -1,6 +1,7 @@
 from aiogram import Router, types, F
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from datetime import datetime
 
 opros_router = Router()
 
@@ -31,21 +32,31 @@ async def process_phone_or_instagram(message: types.Message, state: FSMContext):
 
 @opros_router.message(RestaurantReview.visit_date)
 async def process_visit_date(message: types.Message, state: FSMContext):
-    await state.update_data(visit_date=message.text)
-    await state.set_state(RestaurantReview.food_rating)
-    await message.answer("Оцените качество блюд")
+    try:
+        visit_date = datetime.strptime(message.text, "%d.%m.%Y")
+        await state.update_data(visit_date=visit_date.strftime("%d.%m.%Y"))
+        await state.set_state(RestaurantReview.food_rating)
+        await message.answer("Оцените качество блюд (от 1 до 5)")
+    except ValueError:
+        await message.answer("Пожалуйста, введите дату в формате")
 
 @opros_router.message(RestaurantReview.food_rating)
 async def process_food_rating(message: types.Message, state: FSMContext):
-    await state.update_data(food_rating=message.text)
-    await state.set_state(RestaurantReview.cleanliness_rating)
-    await message.answer("Оцените чистоту заведения")
+    if message.text.isdigit() and 1 <= int(message.text) <= 5:
+        await state.update_data(food_rating=int(message.text))
+        await state.set_state(RestaurantReview.cleanliness_rating)
+        await message.answer("Оцените чистоту заведения (от 1 до 5)")
+    else:
+        await message.answer("Пожалуйста, введите число от 1 до 5 для оценки качества блюд")
 
 @opros_router.message(RestaurantReview.cleanliness_rating)
 async def process_cleanliness_rating(message: types.Message, state: FSMContext):
-    await state.update_data(cleanliness_rating=message.text)
-    await state.set_state(RestaurantReview.extra_comments)
-    await message.answer("Можете добавить свой отзыв ресторану")
+    if message.text.isdigit() and 1 <= int(message.text) <= 5:
+        await state.update_data(cleanliness_rating=int(message.text))
+        await state.set_state(RestaurantReview.extra_comments)
+        await message.answer("Можете добавить свой отзыв ресторану")
+    else:
+        await message.answer("Пожалуйста, введите число от 1 до 5 для оценки чистоты")
 
 @opros_router.message(RestaurantReview.extra_comments)
 async def process_extra_comments(message: types.Message, state: FSMContext):
