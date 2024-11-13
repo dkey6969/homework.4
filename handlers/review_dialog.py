@@ -12,6 +12,11 @@ class RestaurantReview(StatesGroup):
     cleanliness_rating = State()
     extra_comments = State()
 
+@opros_router.callback_query(F.data == "review")
+async def start_review_dialog(callback: types.CallbackQuery, state: FSMContext):
+    await state.set_state(RestaurantReview.name)
+    await callback.message.answer("Как вас зовут?")
+
 @opros_router.message(RestaurantReview.name)
 async def process_name(message: types.Message, state: FSMContext):
     await state.update_data(name=message.text)

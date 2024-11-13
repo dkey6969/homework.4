@@ -27,15 +27,10 @@ async def start_handler(message: types.Message):
             ],
             [
                 types.InlineKeyboardButton(
-                    text="оцените ресторан",
-                    callback_data="riewe"
+                    text="Оцените ресторан",
+                    callback_data="review"
                 )
             ]
         ]
     )
     await message.answer(msg, reply_markup=kb)
-
-@start_router.callback_query(F.data == "riewe")
-async def start_review_dialog(callback: types.CallbackQuery, state):
-    await state.set_state("RestaurantReview:name")
-    await callback.message.answer("Как вас зовут?")
