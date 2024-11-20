@@ -7,7 +7,7 @@ from bot_config import database
 
 admin_dishes_router = Router()
 admin_dishes_router.message.filter(
-    F.from_user.id == 316777745
+    F.from_user.id == 7228978162
 )
 
 class Dish(StatesGroup):
