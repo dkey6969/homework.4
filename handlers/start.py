@@ -6,7 +6,7 @@ start_router = Router()
 @start_router.message(Command("start"))
 async def start_handler(message: types.Message):
     name = message.from_user.first_name
-    msg = f"Привет, {name}"
+    msg = f"Привет, {name}!"
     kb = types.InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -34,3 +34,4 @@ async def start_handler(message: types.Message):
         ]
     )
     await message.answer(msg, reply_markup=kb)
+
