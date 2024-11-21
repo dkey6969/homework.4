@@ -23,9 +23,9 @@ class Database:
                 """
                     CREATE TABLE IF NOT EXISTS dishes (
                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                   name TEXT,
-                   author TEXT,
-                   price INTEGER                  
+                   name TEXT NOT NULL,
+                   author TEXT NOT NULL,
+                   price INTEGER NOT NULL                   
                     )
                 """
             )

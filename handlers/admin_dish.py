@@ -51,3 +51,4 @@ async def process_price(message: types.Message, state: FSMContext):
         )
     )
     await message.answer("Блюдо добавлено")
+    await state.clear()
