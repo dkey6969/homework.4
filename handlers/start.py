@@ -1,12 +1,21 @@
 from aiogram import Router, types
 from aiogram.filters import Command
+from bot_config import database
 
 start_router = Router()
+
 
 @start_router.message(Command("start"))
 async def start_handler(message: types.Message):
     name = message.from_user.first_name
-    msg = f"Привет, {name}!"
+    user_id = message.from_user.id
+    user_count = len(database.fetch("SELECT DISTINCT telegram_id FROM users"))
+
+    if not database.fetch("SELECT * FROM users WHERE telegram_id = ?", (user_id,)):
+        database.execute("INSERT INTO users (telegram_id) VALUES (?)", (user_id,))
+
+    msg = f"Привет, {name}! Наш бот обслуживает уже {user_count} пользователей."
+
     kb = types.InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -34,4 +43,3 @@ async def start_handler(message: types.Message):
         ]
     )
     await message.answer(msg, reply_markup=kb)
-

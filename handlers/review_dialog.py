@@ -23,6 +23,15 @@ async def stop_review(message: types.Message, state: FSMContext):
 
 @review_router.callback_query(F.data == "review")
 async def start_review(callback_query: types.CallbackQuery, state: FSMContext):
+    # Проверка, оставлял ли пользователь уже отзыв
+    user_reviews = database.fetch(
+        query="SELECT * FROM reviews WHERE telegram_id = ?",
+        params=(callback_query.from_user.id,)
+    )
+    if user_reviews:
+        await callback_query.message.answer("Вы уже оставили отзыв. Спасибо!")
+        return
+
     await state.set_state(Review.name)
     await callback_query.message.answer("Как вас зовут?")
 
@@ -71,16 +80,18 @@ async def process_extra_comments(message: types.Message, state: FSMContext):
     await state.update_data(extra_comments=message.text)
     data = await state.get_data()
 
+    # Сохраняем данные отзыва в БД
     database.create_tables()
 
     database.execute(
         query="""
         INSERT INTO reviews (
-            name, phone_or_instagram, visit_date, 
+            telegram_id, name, phone_or_instagram, visit_date, 
             food_rating, cleanliness_rating, extra_comments
-        ) VALUES (?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
         params=(
+            message.from_user.id,  # Добавляем telegram_id
             data["name"],
             data["phone_or_instagram"],
             data["visit_date"],
